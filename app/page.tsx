@@ -2,14 +2,22 @@
 
 import { useState } from "react";
 
+type Scores = {
+  positive: number;
+  neutral: number;
+  negative: number;
+};
+
 export default function Home() {
   const [text, setText] = useState("");
   const [result, setResult] = useState<string>("");
+  const [scores, setScores] = useState<Scores | null>(null);
   const [loading, setLoading] = useState(false);
 
   async function handleAnalyze() {
     setLoading(true);
     setResult("");
+    setScores(null);
 
     const response = await fetch("/api/analyze", {
       method: "POST",
@@ -21,11 +29,13 @@ export default function Home() {
 
     const data = await response.json();
 
-    const sentiment =
-      data?.results?.documents?.[0]?.sentiment || "No result found";
-
-    setResult(sentiment);
+    setResult(data?.sentiment || "No result found");
+    setScores(data?.scores || null);
     setLoading(false);
+  }
+
+  function percent(value: number) {
+    return Math.round(value * 100);
   }
 
   return (
@@ -61,6 +71,14 @@ export default function Home() {
             <p className="text-2xl font-bold capitalize text-gray-900">
               {result}
             </p>
+
+            {scores && (
+              <div className="mt-4 space-y-2 text-gray-800">
+                <p>Positive Score: {percent(scores.positive)}%</p>
+                <p>Neutral Score: {percent(scores.neutral)}%</p>
+                <p>Negative Score: {percent(scores.negative)}%</p>
+              </div>
+            )}
           </div>
         )}
       </div>
