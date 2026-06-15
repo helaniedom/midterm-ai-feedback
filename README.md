@@ -5,7 +5,12 @@ A web application where users submit customer feedback, receive AI-powered senti
 Built with Next.js, Azure AI Language Service, Azure Table Storage, and deployed using Azure App Service.
 
 ---
+## Live Demo
+**Deployed Application:**
 
+https://luckyaisentiment-h5dxgpcbdtfqe0a7.canadacentral-01.azurewebsites.net/
+
+---
 ## Setup
 
 ```bash
