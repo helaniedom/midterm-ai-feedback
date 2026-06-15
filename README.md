@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Customer Feedback Dashboard - INTP302
 
-## Getting Started
+A web application where users submit customer feedback, receive AI-powered sentiment analysis, and view historical feedback records through a simple dashboard.
 
-First, run the development server:
+Built with Next.js, Azure AI Language Service, Azure Table Storage, and deployed using Azure App Service.
+
+---
+
+## Setup
 
 ```bash
+git clone https://github.com/helaniedom/midterm-ai-feedback.git
+
+cd midterm-ai-feedback
+
+npm install
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Application runs locally at:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```text
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Environment Variables
 
-To learn more about Next.js, take a look at the following resources:
+| Variable                        | Description                     |
+| ------------------------------- | ------------------------------- |
+| AZURE_LANGUAGE_ENDPOINT         | Azure AI Language endpoint URL  |
+| AZURE_LANGUAGE_KEY              | Azure AI Language API key       |
+| AZURE_STORAGE_CONNECTION_STRING | Azure Storage connection string |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Create a `.env.local` file and configure the required values.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Environment variables are stored locally and are not committed to the repository.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Azure Services
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+* Azure App Service: hosts the deployed application
+* Azure AI Language Service: performs sentiment analysis
+* Azure Table Storage: stores customer feedback records
+
+---
+
+## Features
+
+* Sentiment Analysis
+* Confidence Scores
+* Feedback History
+* Dashboard Statistics
+* Sentiment Filtering
+
+Users can submit feedback, view sentiment analysis results, and review previously analyzed feedback stored in Azure Table Storage.
+
+---
+
+## Known Limitations
+
+* Mixed sentiment may not always be classified as expected.
+* Supports text-based sentiment analysis only.
+* No user authentication in the current version.
+* Human review is recommended for important business decisions.
+
+---
+
+## License
+
+Educational use only for INTP302 Emerging Trends in Software Development.
