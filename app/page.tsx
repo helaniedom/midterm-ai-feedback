@@ -21,11 +21,13 @@ export default function Home() {
   const [feedback, setFeedback] = useState<Feedback[]>([]);
   const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<string>("");
 
   async function loadFeedback() {
     const response = await fetch("/api/feedback");
     const data = await response.json();
     setFeedback(data.reverse());
+    setLastUpdated(new Date().toLocaleString());
   }
 
   useEffect(() => {
@@ -92,6 +94,15 @@ export default function Home() {
       ? feedback
       : feedback.filter((item) => item.sentiment === filter);
 
+  const mostCommonSentiment =
+    feedback.length === 0
+      ? "No data yet"
+      : positiveCount >= negativeCount && positiveCount >= neutralCount
+      ? "Positive"
+      : negativeCount >= positiveCount && negativeCount >= neutralCount
+      ? "Negative"
+      : "Neutral";
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 p-6">
       <div className="mx-auto max-w-4xl bg-white shadow-2xl rounded-2xl p-8 border border-white">
@@ -99,8 +110,12 @@ export default function Home() {
           AI Customer Feedback Dashboard
         </h1>
 
-        <p className="mb-6 text-gray-600">
+        <p className="mb-2 text-gray-600">
           Enter customer feedback and let Azure AI analyze the sentiment.
+        </p>
+
+        <p className="mb-6 text-sm text-blue-700 font-medium">
+          Powered by Azure AI Language Service and Azure Table Storage
         </p>
 
         <textarea
@@ -120,7 +135,9 @@ export default function Home() {
         </button>
 
         {result && (
-          <div className={`mt-6 p-5 rounded-xl border ${sentimentStyle(result)}`}>
+          <div
+            className={`mt-6 p-5 rounded-xl border ${sentimentStyle(result)}`}
+          >
             <p>Sentiment Result:</p>
             <p className="text-3xl font-bold capitalize">{result}</p>
 
@@ -156,9 +173,41 @@ export default function Home() {
           </div>
         </div>
 
-        <h2 className="text-2xl font-bold mt-10 mb-4 text-blue-900">
+        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-5 text-blue-900">
+          <h2 className="text-xl font-bold mb-3">Dashboard Summary</h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <div>
+              <p className="font-semibold">Total Feedback</p>
+              <p>{feedback.length} records stored</p>
+            </div>
+
+            <div>
+              <p className="font-semibold">Most Common Sentiment</p>
+              <p>{mostCommonSentiment}</p>
+            </div>
+
+            <div>
+              <p className="font-semibold">Last Updated</p>
+              <p>{lastUpdated || "Loading..."}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 bg-purple-50 border border-purple-200 rounded-xl p-4 text-purple-900 text-sm">
+          Azure AI returns the dominant sentiment. Mixed feedback may be
+          classified as positive, negative, or neutral depending on which
+          sentiment is strongest.
+        </div>
+
+        <h2 className="text-2xl font-bold mt-10 mb-2 text-blue-900">
           Feedback History
         </h2>
+
+        <p className="mb-4 text-sm text-gray-600">
+          Showing {filteredFeedback.length} of {feedback.length} feedback
+          records
+        </p>
 
         <div className="flex flex-wrap gap-3 mb-5">
           <button
@@ -222,6 +271,10 @@ export default function Home() {
             ))
           )}
         </div>
+
+        <footer className="mt-10 pt-6 border-t text-center text-sm text-gray-500">
+          INTP302 Midterm Project Â· AI Customer Feedback Dashboard
+        </footer>
       </div>
     </main>
   );
