@@ -19,6 +19,7 @@ export default function Home() {
   const [result, setResult] = useState<string>("");
   const [scores, setScores] = useState<Scores | null>(null);
   const [feedback, setFeedback] = useState<Feedback[]>([]);
+  const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(false);
 
   async function loadFeedback() {
@@ -38,7 +39,9 @@ export default function Home() {
 
     const response = await fetch("/api/analyze", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({ text }),
     });
 
@@ -57,15 +60,37 @@ export default function Home() {
   }
 
   function sentimentStyle(sentiment: string) {
-    if (sentiment === "positive") return "bg-green-100 text-green-700 border-green-300";
-    if (sentiment === "negative") return "bg-red-100 text-red-700 border-red-300";
-    if (sentiment === "neutral") return "bg-yellow-100 text-yellow-700 border-yellow-300";
-    return "bg-blue-100 text-blue-700 border-blue-300";
+    if (sentiment === "positive")
+      return "bg-green-100 text-green-800 border-green-300";
+    if (sentiment === "negative")
+      return "bg-red-100 text-red-800 border-red-300";
+    if (sentiment === "neutral")
+      return "bg-yellow-100 text-yellow-800 border-yellow-300";
+    return "bg-blue-100 text-blue-800 border-blue-300";
   }
 
-  const positiveCount = feedback.filter((item) => item.sentiment === "positive").length;
-  const negativeCount = feedback.filter((item) => item.sentiment === "negative").length;
-  const neutralCount = feedback.filter((item) => item.sentiment === "neutral").length;
+  function filterButtonStyle(value: string) {
+    return filter === value
+      ? "bg-blue-600 text-white"
+      : "bg-white text-blue-700 border border-blue-300 hover:bg-blue-50";
+  }
+
+  const positiveCount = feedback.filter(
+    (item) => item.sentiment === "positive"
+  ).length;
+
+  const negativeCount = feedback.filter(
+    (item) => item.sentiment === "negative"
+  ).length;
+
+  const neutralCount = feedback.filter(
+    (item) => item.sentiment === "neutral"
+  ).length;
+
+  const filteredFeedback =
+    filter === "all"
+      ? feedback
+      : feedback.filter((item) => item.sentiment === filter);
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 p-6">
@@ -135,21 +160,67 @@ export default function Home() {
           Feedback History
         </h2>
 
+        <div className="flex flex-wrap gap-3 mb-5">
+          <button
+            onClick={() => setFilter("all")}
+            className={`px-4 py-2 rounded-full font-semibold transition ${filterButtonStyle(
+              "all"
+            )}`}
+          >
+            All
+          </button>
+
+          <button
+            onClick={() => setFilter("positive")}
+            className={`px-4 py-2 rounded-full font-semibold transition ${filterButtonStyle(
+              "positive"
+            )}`}
+          >
+            Positive
+          </button>
+
+          <button
+            onClick={() => setFilter("negative")}
+            className={`px-4 py-2 rounded-full font-semibold transition ${filterButtonStyle(
+              "negative"
+            )}`}
+          >
+            Negative
+          </button>
+
+          <button
+            onClick={() => setFilter("neutral")}
+            className={`px-4 py-2 rounded-full font-semibold transition ${filterButtonStyle(
+              "neutral"
+            )}`}
+          >
+            Neutral
+          </button>
+        </div>
+
         <div className="space-y-4">
-          {feedback.map((item, index) => (
-            <div
-              key={index}
-              className={`border rounded-xl p-4 shadow-sm ${sentimentStyle(item.sentiment)}`}
-            >
-              <p className="text-gray-900">{item.text}</p>
-              <p className="mt-2 text-sm capitalize font-bold">
-                Sentiment: {item.sentiment}
-              </p>
-              <p className="text-xs opacity-70">
-                {new Date(item.createdAt).toLocaleString()}
-              </p>
+          {filteredFeedback.length === 0 ? (
+            <div className="bg-gray-50 border rounded-xl p-6 text-center text-gray-500">
+              No feedback found for this filter.
             </div>
-          ))}
+          ) : (
+            filteredFeedback.map((item, index) => (
+              <div
+                key={index}
+                className={`border rounded-xl p-4 shadow-sm ${sentimentStyle(
+                  item.sentiment
+                )}`}
+              >
+                <p className="text-gray-900">{item.text}</p>
+                <p className="mt-2 text-sm capitalize font-bold">
+                  Sentiment: {item.sentiment}
+                </p>
+                <p className="text-xs opacity-70">
+                  {new Date(item.createdAt).toLocaleString()}
+                </p>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </main>
